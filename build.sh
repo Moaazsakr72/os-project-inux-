@@ -38,7 +38,7 @@ else
 fi
 
 echo "[3/3] Compiling Shared Memory Chat..."
-g++ -o shm_chat "Shared memory.cpp" $GTK_CFLAGS $GTK_LIBS -lpthread -lrt
+g++ -o shm_chat SharedMemoryChat.cpp $GTK_CFLAGS $GTK_LIBS -lpthread -lrt
 if [ $? -eq 0 ]; then
     echo "      Shared Memory Chat compiled successfully!"
 else
