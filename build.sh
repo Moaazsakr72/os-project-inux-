@@ -1,17 +1,47 @@
 #!/bin/bash
 # Build script for Linux Chat Applications
 # Uses GTK 3 for GUI
+# Auto-installs dependencies if needed
 
 echo "==================================="
 echo "  Linux Chat System Build Script"
-echo "  (GTK 3 GUI)"
+echo "  (GTK 3 GUI - Auto Setup)"
 echo "==================================="
 
-# Check if GTK 3 dev files exist
-if ! pkg-config --exists gtk+-3.0; then
-    echo "ERROR: GTK 3 dev files not found."
-    echo "Install with: sudo apt-get install libgtk-3-dev"
-    exit 1
+# Function to install dependencies
+install_dependencies() {
+    echo ""
+    echo "[SETUP] Installing required packages..."
+    echo "        (This may ask for your password)"
+    echo ""
+    
+    sudo apt-get update
+    sudo apt-get install -y build-essential g++ libgtk-3-dev pkg-config
+    
+    if [ $? -eq 0 ]; then
+        echo ""
+        echo "[SETUP] Packages installed successfully!"
+    else
+        echo ""
+        echo "[ERROR] Failed to install packages!"
+        echo "        Try running manually:"
+        echo "        sudo apt-get install build-essential g++ libgtk-3-dev pkg-config"
+        exit 1
+    fi
+}
+
+# Check if GTK 3 dev files exist, install if not
+echo ""
+echo "[CHECK] Checking for required libraries..."
+
+if ! command -v g++ &> /dev/null; then
+    echo "        g++ not found - will install"
+    install_dependencies
+elif ! pkg-config --exists gtk+-3.0 2>/dev/null; then
+    echo "        GTK 3 not found - will install"
+    install_dependencies
+else
+    echo "        All required libraries found!"
 fi
 
 # Get GTK flags

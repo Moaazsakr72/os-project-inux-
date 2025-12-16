@@ -1,0 +1,144 @@
+================================================================================
+           LINUX CHAT SYSTEM - VMWARE SETUP GUIDE
+           Step-by-Step Instructions (SIMPLIFIED)
+================================================================================
+
+STEP 1: SET UP SHARED FOLDER IN VMWARE
+----------------------------------------
+1. Open VMware and select your Linux VM (don't start it yet)
+2. Go to VM -> Settings (or right-click -> Settings)
+3. Click "Options" tab -> "Shared Folders"
+4. Select "Always enabled"
+5. Click "Add" -> Browse to your project folder
+6. Give it a simple name like "osproject"
+7. Click OK -> OK
+
+
+STEP 2: START LINUX VM & OPEN TERMINAL
+----------------------------------------
+1. Start your Linux VM
+2. Open Terminal (Ctrl+Alt+T or search for "Terminal")
+
+
+STEP 3: ACCESS SHARED FOLDER
+----------------------------------------
+Run this command to check if shared folder is visible:
+
+    ls /mnt/hgfs/
+
+If you see your folder name (osproject) -> Go to Step 4
+
+If empty or error, run these commands:
+
+    sudo mkdir -p /mnt/hgfs
+    sudo vmhgfs-fuse .host:/ /mnt/hgfs -o allow_other
+    ls /mnt/hgfs/
+
+
+STEP 4: RUN BUILD SCRIPT (INSTALLS & COMPILES EVERYTHING!)
+----------------------------------------
+Run these commands:
+
+    cd /mnt/hgfs/osproject/
+    chmod +x build.sh
+    ./build.sh
+
+The build script will:
+  - Automatically install g++, GTK 3, and all required libraries
+  - Ask for your password (for sudo)
+  - Compile all 3 programs
+
+You should see:
+    ===================================
+      Linux Chat System Build Script
+      (GTK 3 GUI - Auto Setup)
+    ===================================
+    [CHECK] Checking for required libraries...
+    [SETUP] Installing required packages...
+    [SETUP] Packages installed successfully!
+    [1/3] Compiling Server...
+          Server compiled successfully!
+    [2/3] Compiling Client...
+          Client compiled successfully!
+    [3/3] Compiling Shared Memory Chat...
+          Shared Memory Chat compiled successfully!
+    ===================================
+      BUILD SUCCESSFUL!
+    ===================================
+
+
+STEP 5A: RUN SOCKET CHAT (CLIENT-SERVER)
+----------------------------------------
+Open 2 terminal windows:
+
+TERMINAL 1 (Server):
+    cd /mnt/hgfs/osproject/
+    ./server
+
+TERMINAL 2 (Client):
+    cd /mnt/hgfs/osproject/
+    ./client
+
+In Client window:
+    1. Keep IP as 127.0.0.1
+    2. Click CONNECT button
+    3. Type message -> Press Enter or click SEND
+
+
+STEP 5B: RUN SHARED MEMORY CHAT
+----------------------------------------
+Open 2 terminal windows:
+
+TERMINAL 1:
+    cd /mnt/hgfs/osproject/
+    ./shm_chat
+
+TERMINAL 2:
+    cd /mnt/hgfs/osproject/
+    ./shm_chat
+
+Both windows will have different User IDs and can chat!
+
+
+================================================================================
+                        QUICK SUMMARY (ONLY 3 COMMANDS!)
+================================================================================
+
+    cd /mnt/hgfs/osproject/
+    chmod +x build.sh
+    ./build.sh
+
+That's it! The build script handles everything automatically.
+
+
+================================================================================
+                        TROUBLESHOOTING
+================================================================================
+
+PROBLEM: /mnt/hgfs is empty
+SOLUTION: Run these commands:
+    sudo mkdir -p /mnt/hgfs
+    sudo vmhgfs-fuse .host:/ /mnt/hgfs -o allow_other
+
+----------------------------------------
+
+PROBLEM: "Cannot open display"
+SOLUTION: Make sure you're running in the VM's desktop GUI, not SSH
+
+----------------------------------------
+
+PROBLEM: "Address already in use" (Server error)
+SOLUTION: Wait 1 minute and try again, or run:
+    sudo killall server
+
+----------------------------------------
+
+PROBLEM: VMware tools not working
+SOLUTION: Install open-vm-tools:
+    sudo apt-get install -y open-vm-tools open-vm-tools-desktop
+    sudo reboot
+
+
+================================================================================
+                    END OF GUIDE - GOOD LUCK!
+================================================================================
