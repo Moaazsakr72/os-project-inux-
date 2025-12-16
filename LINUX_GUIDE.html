@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linux Chat System - Complete Guide</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.7;
+            color: #1a1a2e;
+            background: #ffffff;
+            padding: 40px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        @media print {
+            body {
+                padding: 20px;
+                font-size: 11pt;
+            }
+
+            .page-break {
+                page-break-before: always;
+            }
+
+            h1,
+            h2,
+            h3 {
+                page-break-after: avoid;
+            }
+
+            pre,
+            .code-block {
+                page-break-inside: avoid;
+            }
+        }
+
+        /* Header Styles */
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 16px;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .header .badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin-top: 15px;
+            font-weight: 500;
+        }
+
+        /* Section Styles */
+        h2 {
+            color: #667eea;
+            font-size: 1.6em;
+            margin: 35px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        h3 {
+            color: #4a4a6a;
+            font-size: 1.2em;
+            margin: 25px 0 15px 0;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        /* Code Blocks */
+        pre,
+        .code-block {
+            background: #1e1e3f;
+            color: #e4e4f7;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            background: #f0f0f8;
+            padding: 2px 8px;
+            border-radius: 4px;
+            color: #764ba2;
+            font-size: 0.9em;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+        }
+
+        .code-comment {
+            color: #7c7c9e;
+        }
+
+        /* Info Boxes */
+        .info-box {
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .info-box.important {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+        }
+
+        .info-box.success {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+        }
+
+        .info-box.info {
+            background: #e7f3ff;
+            border-left: 5px solid #667eea;
+        }
+
+        .info-box.warning {
+            background: #ffe6e6;
+            border-left: 5px solid #dc3545;
+        }
+
+        .info-box-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.95em;
+        }
+
+        th,
+        td {
+            padding: 12px 15px;
+            text-align: left;
+            border: 1px solid #e0e0e8;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9ff;
+        }
+
+        /* Steps */
+        .step {
+            background: #f8f9ff;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 1px solid #e0e0e8;
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .step-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.3em;
+            flex-shrink: 0;
+        }
+
+        .step-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #1a1a2e;
+        }
+
+        /* Lists */
+        ul,
+        ol {
+            margin: 15px 0;
+            padding-left: 25px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        /* Architecture Diagram */
+        .diagram {
+            background: #f8f9ff;
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 25px 0;
+            text-align: center;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85em;
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+            color: #7c7c9e;
+            border-top: 2px solid #e0e0e8;
+        }
+
+        /* Highlight */
+        .highlight {
+            background: linear-gradient(120deg, #a8edea 0%, #fed6e3 100%);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <div class="header">
+        <h1>🐧 Linux Chat System</h1>
+        <div class="subtitle">Complete Setup & Usage Guide</div>
+        <div class="badge">GTK 3 GUI • Sockets • Shared Memory • Semaphores</div>
+    </div>
+
+    <!-- Table of Contents -->
+    <h2>📋 Table of Contents</h2>
+    <ol>
+        <li><a href="#gui">GUI Library Information</a></li>
+        <li><a href="#requirements">Required Libraries</a></li>
+        <li><a href="#shared-folder">Finding Shared Folder Path</a></li>
+        <li><a href="#compile">Compiling the Applications</a></li>
+        <li><a href="#run">Running the Applications (Same Machine)</a></li>
+        <li><a href="#network">Running Client on Different Device (Network)</a></li>
+        <li><a href="#permanent">Making Executables Permanent</a></li>
+        <li><a href="#troubleshooting">Troubleshooting</a></li>
+        <li><a href="#architecture">Architecture Overview</a></li>
+    </ol>
+
+    <!-- Section 1: GUI Library -->
+    <h2 id="gui">1. GUI Library Information</h2>
+
+    <div class="info-box success">
+        <div class="info-box-title">✅ Using GTK 3</div>
+        This project uses <strong>GTK 3</strong> - a modern, cross-platform GUI toolkit.
+    </div>
+
+    <h3>Why GTK 3?</h3>
+    <ul>
+        <li><strong>Modern & Feature-rich</strong> - Much better than raw X11/Xlib</li>
+        <li><strong>Native Look</strong> - Integrates with Linux desktop themes</li>
+        <li><strong>Easy to Use</strong> - Proper widgets (buttons, text views, entries)</li>
+        <li><strong>Well-maintained</strong> - Active development and documentation</li>
+        <li><strong>Thread-safe</strong> - Using <code>gdk_threads_add_idle()</code> for UI updates</li>
+    </ul>
+
+    <div class="page-break"></div>
+
+    <!-- Section 2: Required Libraries -->
+    <h2 id="requirements">2. Required Libraries (Install FIRST!)</h2>
+
+    <div class="info-box warning">
+        <div class="info-box-title">⚠️ IMPORTANT</div>
+        You MUST install these libraries BEFORE trying to compile!
+    </div>
+
+    <div class="step">
+        <div class="step-header">
+            <div class="step-number">1</div>
+            <div class="step-title">Open Terminal in Linux VM</div>
+        </div>
+        <p>Open the terminal application in your Linux virtual machine.</p>
+    </div>
+
+    <div class="step">
+        <div class="step-header">
+            <div class="step-number">2</div>
+            <div class="step-title">Update Package List</div>
+        </div>
+        <pre><code>sudo apt-get update</code></pre>
+    </div>
+
+    <div class="step">
+        <div class="step-header">
+            <div class="step-number">3</div>
+            <div class="step-title">Install Required Packages</div>
+        </div>
+        <pre><code>sudo apt-get install -y build-essential g++ libgtk-3-dev pkg-config</code></pre>
+    </div>
+
+    <h3>Package Descriptions</h3>
+    <table>
+        <tr>
+            <th>Package</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td><code>build-essential</code></td>
+            <td>Basic compilation tools (gcc, make, etc.)</td>
+        </tr>
+        <tr>
+            <td><code>g++</code></td>
+            <td>C++ compiler</td>
+        </tr>
+        <tr>
+            <td><code>libgtk-3-dev</code></td>
+            <td>GTK 3 development files (headers + libraries)</td>
+        </tr>
+        <tr>
+            <td><code>pkg-config</code></td>
+            <td>Tool to find library compile/link flags automatically</td>
+        </tr>
+    </table>
+
+    <div class="page-break"></div>
+
+    <!-- Section 3: Finding Shared Folder -->
+    <h2 id="shared-folder">3. Finding Shared Folder Path in VMware</h2>
+
+    <p>Since you have shared folders enabled in VMware, follow these steps:</p>
+
+    <h3>Method 1: Check /mnt/hgfs (Most Common)</h3>
+    <pre><code>ls /mnt/hgfs</code></pre>
+    <p>If you see your shared folder name, the path will be:</p>
+    <pre><code>/mnt/hgfs/YOUR_SHARED_FOLDER_NAME/</code></pre>
+
+    <h3>Method 2: If /mnt/hgfs is Empty</h3>
+    <p>You may need to mount the shared folders manually:</p>
+    <pre><code><span class="code-comment"># Create mount point if it doesn't exist</span>
+sudo mkdir -p /mnt/hgfs
+
+<span class="code-comment"># Mount VMware shared folders</span>
+sudo vmhgfs-fuse .host:/ /mnt/hgfs -o allow_other
+
+<span class="code-comment"># Now check again</span>
+ls /mnt/hgfs</code></pre>
+
+    <h3>Method 3: If Still Not Working</h3>
+    <p>Install or reinstall VMware tools:</p>
+    <pre><code><span class="code-comment"># Install open-vm-tools</span>
+sudo apt-get install -y open-vm-tools open-vm-tools-desktop
+
+<span class="code-comment"># Reboot the VM</span>
+sudo reboot</code></pre>
+
+    <div class="info-box info">
+        <div class="info-box-title">📁 Your Project Path</div>
+        Based on your folder name, your path will likely be:
+        <pre><code>/mnt/hgfs/Os project (linux )/</code></pre>
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- Section 4: Compiling -->
+    <h2 id="compile">4. Compiling the Applications</h2>
+
+    <div class="step">
+        <div class="step-header">
+            <div class="step-number">1</div>
+            <div class="step-title">Navigate to Project Folder</div>
+        </div>
+        <pre><code>cd "/mnt/hgfs/Os project (linux )/"</code></pre>
+    </div>
+
+    <div class="step">
+        <div class="step-header">
+            <div class="step-number">2</div>
+            <div class="step-title">Verify Files Exist</div>
+        </div>
+        <pre><code>ls -la</code></pre>
+        <p>You should see:</p>
+        <ul>
+            <li><code>Client.cpp</code> - Socket chat client</li>
+            <li><code>Server.cpp</code> - Socket chat server</li>
+            <li><code>Shared memory.cpp</code> - Shared memory chat</li>
+            <li><code>build.sh</code> - Build script</li>
+        </ul>
+    </div>
+
+    <div class="step">
+        <div class="step-header">
+            <div class="step-number">3</div>
+            <div class="step-title">Make Build Script Executable</div>
+        </div>
+        <pre><code>chmod +x build.sh</code></pre>
+    </div>
+
+    <div class="step">
+        <div class="step-header">
+            <div class="step-number">4</div>
+            <div class="step-title">Run the Build Script</div>
+        </div>
+        <pre><code>./build.sh</code></pre>
+    </div>
+
+    <h3>Expected Output</h3>
+    <pre><code>===================================
+  Linux Chat System Build Script
+  (GTK 3 GUI)
+===================================
+
+[1/3] Compiling Server...
+      Server compiled successfully!
+[2/3] Compiling Client...
+      Client compiled successfully!
+[3/3] Compiling Shared Memory Chat...
+      Shared Memory Chat compiled successfully!
+
+===================================
+  BUILD SUCCESSFUL!
+===================================</code></pre>
+
+    <div class="info-box success">
+        <div class="info-box-title">✅ After Successful Compilation</div>
+        You will have 3 new executable files:
+        <ul>
+            <li><code>server</code> - Chat server executable</li>
+            <li><code>client</code> - Chat client executable</li>
+            <li><code>shm_chat</code> - Shared memory chat executable</li>
+        </ul>
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- Section 5: Running -->
+    <h2 id="run">5. Running the Applications</h2>
+
+    <h3>Option A: Socket Chat (Client-Server over Network)</h3>
+
+    <p>This uses <span class="highlight">TCP/IP Sockets</span> and <span class="highlight">Multithreading</span>. Can
+        work over a network!</p>
+
+    <table>
+        <tr>
+            <th>Terminal 1 (Server)</th>
+            <th>Terminal 2 (Client)</th>
+        </tr>
+        <tr>
+            <td>
+                <pre><code>cd "/mnt/hgfs/Os project (linux )/"
+./server</code></pre>
+            </td>
+            <td>
+                <pre><code>cd "/mnt/hgfs/Os project (linux )/"
+./client</code></pre>
+            </td>
+        </tr>
+    </table>
+
+    <h4>Using the Client:</h4>
+    <ol>
+        <li>Keep IP as <code>127.0.0.1</code> (localhost) for same machine</li>
+        <li>Click the <strong>CONNECT</strong> button</li>
+        <li>Wait for "Connected" status</li>
+        <li>Type your message in the input box</li>
+        <li>Press <strong>Enter</strong> or click <strong>SEND</strong></li>
+    </ol>
+
+    <h3>Option B: Shared Memory Chat (Same Machine)</h3>
+
+    <p>This uses <span class="highlight">POSIX Shared Memory</span> and <span class="highlight">Semaphores</span>. Only
+        works on the same machine!</p>
+
+    <table>
+        <tr>
+            <th>Terminal 1</th>
+            <th>Terminal 2</th>
+        </tr>
+        <tr>
+            <td>
+                <pre><code>cd "/mnt/hgfs/Os project (linux )/"
+./shm_chat</code></pre>
+            </td>
+            <td>
+                <pre><code>cd "/mnt/hgfs/Os project (linux )/"
+./shm_chat</code></pre>
+            </td>
+        </tr>
+    </table>
+
+    <p>Both windows will get unique User IDs and can chat with each other through shared memory!</p>
+
+    <div class="page-break"></div>
+
+    <!-- Section 5B: Running on Different Devices -->
+    <h2 id="network">5B. Running Client on a Different Device (Network Chat)</h2>
+
+    <div class="info-box info">
+        <div class="info-box-title">🌐 Network Setup</div>
+        This section explains how to run the <strong>server</strong> on one VMware VM and the <strong>client</strong> on
+        a different VMware VM (or device), both connected to the same WiFi/hotspot.
+    </div>
+
+    <h3>Prerequisites</h3>
+    <ul>
+        <li>Both devices/VMs connected to the <strong>same network</strong> (WiFi hotspot, router, etc.)</li>
+        <li>VMware network set to <strong>Bridged Mode</strong></li>
+        <li>Code compiled on both machines</li>
+    </ul>
+
+    <h3>Step 1: Configure VMware Network (BOTH VMs)</h3>
+
+    <div class="step">
+        <div class="step-header">
+            <div class="step-number">1</div>
+            <div class="step-title">Open VMware Settings</div>
+        </div>
+        <ol>
+            <li>In VMware, go to <strong>VM → Settings</strong> (or right-click VM → Settings)</li>
+            <li>Select <strong>Network Adapter</strong></li>
+            <li>Change from "NAT" to <strong>"Bridged: Connected directly to the physical network"</strong></li>
+            <li>Check <strong>"Replicate physical network connection state"</strong></li>
+            <li>Click <strong>OK</strong></li>
+        </ol>
+    </div>
+
+    <div class="info-box important">
+        <div class="info-box-title">⚠️ Why Bridged Mode?</div>
+        <ul>
+            <li><strong>NAT mode</strong> = VMs get private IPs, can't see each other</li>
+            <li><strong>Bridged mode</strong> = VMs get IPs on real network, can communicate</li>
+        </ul>
+    </div>
+
+    <h3>Step 2: Find Server's IP Address</h3>
+
+    <div class="step">
+        <div class="step-header">
+            <div class="step-number">2</div>
+            <div class="step-title">Get IP on Server Machine</div>
+        </div>
+        <p>On the VM that will run the <strong>server</strong>, open terminal and run:</p>
+        <pre><code>ip addr show</code></pre>
+        <p>Or the simpler command:</p>
+        <pre><code>hostname -I</code></pre>
+        <p>Look for an IP like <code>192.168.x.x</code> or <code>10.x.x.x</code></p>
+    </div>
+
+    <div class="info-box success">
+        <div class="info-box-title">📝 Example Output</div>
+        <pre><code>$ hostname -I
+192.168.1.105</code></pre>
+        <p>In this example, the server IP is <strong>192.168.1.105</strong></p>
+    </div>
+
+    <h3>Step 3: Start Server</h3>
+
+    <div class="step">
+        <div class="step-header">
+            <div class="step-number">3</div>
+            <div class="step-title">Run Server on First VM</div>
+        </div>
+        <pre><code>cd "/mnt/hgfs/Os project (linux )/"
+./server</code></pre>
+        <p>The server will show: <strong>"Waiting for client on port 8080..."</strong></p>
+    </div>
+
+    <h3>Step 4: Connect Client from Second Device</h3>
+
+    <div class="step">
+        <div class="step-header">
+            <div class="step-number">4</div>
+            <div class="step-title">Run Client on Second VM</div>
+        </div>
+        <pre><code>cd "/mnt/hgfs/Os project (linux )/"
+./client</code></pre>
+        <p>In the client window:</p>
+        <ol>
+            <li>Replace <code>127.0.0.1</code> with the <strong>server's IP address</strong> (e.g.,
+                <code>192.168.1.105</code>)
+            </li>
+            <li>Click <strong>CONNECT</strong></li>
+            <li>Wait for "Connected" status</li>
+            <li>Start chatting!</li>
+        </ol>
+    </div>
+
+    <h3>Network Diagram</h3>
+    <div class="diagram">
+        ┌─────────────────────────────────────────────────────────────────┐
+        │ SAME NETWORK / HOTSPOT │
+        │ (e.g., 192.168.1.x) │
+        └─────────────────────────────────────────────────────────────────┘
+        │
+        ┌───────────────────┴───────────────────┐
+        │ │
+        ▼ ▼
+        ┌─────────────────────────┐ ┌─────────────────────────┐
+        │ VM 1 (SERVER) │ │ VM 2 (CLIENT) │
+        │ ───────────────────── │ │ ───────────────────── │
+        │ │ │ │
+        │ IP: 192.168.1.105 │◄───────►│ Connects to: │
+        │ Running: ./server │ TCP │ 192.168.1.105:8080 │
+        │ Port: 8080 │ │ Running: ./client │
+        │ │ │ │
+        │ VMware: Bridged Mode │ │ VMware: Bridged Mode │
+        └─────────────────────────┘ └─────────────────────────┘
+    </div>
+
+    <h3>Troubleshooting Network Connection</h3>
+
+    <div class="info-box warning">
+        <div class="info-box-title">❌ "Connection failed" or "Connection refused"</div>
+        <p>Try these fixes:</p>
+        <ol>
+            <li><strong>Check firewall</strong> - Disable or allow port 8080:
+                <pre><code>sudo ufw allow 8080/tcp</code></pre>
+            </li>
+            <li><strong>Ping test</strong> - Make sure VMs can see each other:
+                <pre><code>ping 192.168.1.105</code></pre>
+            </li>
+            <li><strong>Check server is running</strong> - Make sure server started first</li>
+            <li><strong>Verify correct IP</strong> - Double-check the IP address</li>
+        </ol>
+    </div>
+
+    <div class="info-box warning">
+        <div class="info-box-title">❌ VMs can't ping each other</div>
+        <ol>
+            <li>Confirm both VMs are in <strong>Bridged Mode</strong></li>
+            <li>Restart network in VMs:
+                <pre><code>sudo systemctl restart NetworkManager</code></pre>
+            </li>
+            <li>Make sure both connected to <strong>same WiFi/network</strong></li>
+        </ol>
+    </div>
+
+    <div class="info-box warning">
+        <div class="info-box-title">❌ IP shows 127.0.0.1 only</div>
+        <p>The VM isn't getting a real network IP. Check:</p>
+        <ol>
+            <li>VMware network is set to <strong>Bridged</strong>, not NAT</li>
+            <li>Host machine is connected to WiFi/network</li>
+            <li>Restart the VM after changing network settings</li>
+        </ol>
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- Section 6: Making Permanent -->
+    <h2 id="permanent">6. Making Executables Permanent (No ./ Required)</h2>
+
+    <p>To run executables from anywhere without typing <code>./</code> every time:</p>
+
+    <h3>Option A: Copy to System Directory (Recommended)</h3>
+    <pre><code>sudo cp "/mnt/hgfs/Os project (linux )/server" /usr/local/bin/chat-server
+sudo cp "/mnt/hgfs/Os project (linux )/client" /usr/local/bin/chat-client
+sudo cp "/mnt/hgfs/Os project (linux )/shm_chat" /usr/local/bin/shm-chat</code></pre>
+
+    <p>Now you can run from anywhere:</p>
+    <pre><code>chat-server
+chat-client
+shm-chat</code></pre>
+
+    <h3>Option B: Create Symbolic Links</h3>
+    <pre><code>sudo ln -s "/mnt/hgfs/Os project (linux )/server" /usr/local/bin/chat-server
+sudo ln -s "/mnt/hgfs/Os project (linux )/client" /usr/local/bin/chat-client
+sudo ln -s "/mnt/hgfs/Os project (linux )/shm_chat" /usr/local/bin/shm-chat</code></pre>
+
+    <h3>Option C: Add to PATH (Temporary - Session Only)</h3>
+    <pre><code>export PATH=$PATH:"/mnt/hgfs/Os project (linux )/"</code></pre>
+
+    <div class="page-break"></div>
+
+    <!-- Section 7: Troubleshooting -->
+    <h2 id="troubleshooting">7. Troubleshooting</h2>
+
+    <div class="info-box warning">
+        <div class="info-box-title">❌ "Cannot open display"</div>
+        <p>Make sure you're running in a graphical environment, not SSH.</p>
+        <pre><code>echo $DISPLAY
+<span class="code-comment"># Should show :0 or similar</span></code></pre>
+    </div>
+
+    <div class="info-box warning">
+        <div class="info-box-title">❌ "GTK not found" or "pkg-config" errors</div>
+        <pre><code>sudo apt-get install -y libgtk-3-dev pkg-config</code></pre>
+    </div>
+
+    <div class="info-box warning">
+        <div class="info-box-title">❌ "Permission denied"</div>
+        <pre><code>chmod +x build.sh server client shm_chat</code></pre>
+    </div>
+
+    <div class="info-box warning">
+        <div class="info-box-title">❌ Shared folders not visible</div>
+        <pre><code>sudo vmhgfs-fuse .host:/ /mnt/hgfs -o allow_other</code></pre>
+    </div>
+
+    <div class="info-box warning">
+        <div class="info-box-title">❌ "Address already in use" (Server)</div>
+        <p>The port 8080 is already being used. Either:</p>
+        <ul>
+            <li>Wait a minute and try again</li>
+            <li>Kill the old process: <code>sudo killall server</code></li>
+        </ul>
+    </div>
+
+    <!-- Section 8: Quick Reference -->
+    <h2>📌 Quick Reference Commands</h2>
+
+    <table>
+        <tr>
+            <th>Task</th>
+            <th>Command</th>
+        </tr>
+        <tr>
+            <td>Install libraries</td>
+            <td><code>sudo apt-get install -y build-essential g++ libgtk-3-dev pkg-config</code></td>
+        </tr>
+        <tr>
+            <td>Navigate to project</td>
+            <td><code>cd "/mnt/hgfs/Os project (linux )/"</code></td>
+        </tr>
+        <tr>
+            <td>Make script executable</td>
+            <td><code>chmod +x build.sh</code></td>
+        </tr>
+        <tr>
+            <td>Compile all</td>
+            <td><code>./build.sh</code></td>
+        </tr>
+        <tr>
+            <td>Run server</td>
+            <td><code>./server</code></td>
+        </tr>
+        <tr>
+            <td>Run client</td>
+            <td><code>./client</code></td>
+        </tr>
+        <tr>
+            <td>Run shared memory chat</td>
+            <td><code>./shm_chat</code></td>
+        </tr>
+    </table>
+
+    <div class="page-break"></div>
+
+    <!-- Section 8: Architecture -->
+    <h2 id="architecture">8. Architecture Overview</h2>
+
+    <div class="diagram">
+        ┌─────────────────────────────────────────────────────────────┐
+        │ GTK 3 GUI │
+        │ (Buttons, Text Views, Entry Fields) │
+        │ │
+        │ • gtk_window_new() • gtk_text_view_new() │
+        │ • gtk_button_new() • gtk_entry_new() │
+        │ • gtk_box_new() • gdk_threads_add_idle() │
+        └─────────────────────────────────────────────────────────────┘
+        │
+        ┌──────────────┴──────────────┐
+        ▼ ▼
+        ┌─────────────────────────────┐ ┌─────────────────────────────┐
+        │ SOCKET CHAT │ │ SHARED MEMORY CHAT │
+        │ ─────────── │ │ ─────────────────── │
+        │ │ │ │
+        │ • TCP/IP Sockets │ │ • POSIX shm_open() │
+        │ • socket(), bind() │ │ • mmap() for mapping │
+        │ • listen(), accept() │ │ • POSIX Semaphores │
+        │ • send(), recv() │ │ • sem_open(), sem_wait() │
+        │ • std::thread │ │ • sem_post() │
+        │ │ │ • std::thread │
+        │ ✓ Works over network │ │ ✓ Same machine only │
+        │ ✓ Client-Server model │ │ ✓ Multiple users OK │
+        └─────────────────────────────┘ └─────────────────────────────┘
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p><strong>Linux Chat System with GTK 3 GUI</strong></p>
+        <p>Sockets + Multithreading | Shared Memory + Semaphores</p>
+        <p>Generated: December 2024</p>
+    </div>
+
+</body>
+
+</html>
